@@ -8,6 +8,11 @@
     "background": {
       "service_worker": "background.js"
     },
+    "icons": {
+      "16": "images/display.png",
+      "48": "images/display.png",
+      "128": "images/display.png"
+    },
     "content_scripts": [
       {
         "matches": ["*://www.youtube.com/*"],
@@ -22,6 +27,11 @@
         "resources": ["images/plus.png"],
         "matches": ["*://www.youtube.com/*"]
       }
-    ]
+    ],
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
   }
   
