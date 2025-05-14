@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>YouTube Bookmarks</title>
-    <style>
-        /* Basic styling */
-        body { width: 300px; font-family: Arial, sans-serif; }
-        .bookmark { margin-bottom: 10px; }
-        .bookmark img { width: 100px; height: 56px; }
-        .bookmark p { font-size: 14px; margin: 5px 0; }
-    </style>
+    <link rel="stylesheet" href="popup.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h3>Bookmarks</h3>
-    <div id="bookmarks-list"></div>
+    <header>
+        <h1>YouTube Bookmarks</h1>
+    </header>
+    
+    <div class="container">
+        <div id="bookmarks-list"></div>
+    </div>
+    
     <script src="popup.js"></script>
 </body>
 </html>
