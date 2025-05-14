@@ -12,6 +12,7 @@ chrome.storage.local.get({ bookmarks: [] }, (data) => {
         return;
     }
 
+
     // Display bookmarks in reverse order (newest first)
     data.bookmarks.slice().reverse().forEach((bookmark, index) => {
         const bookmarkElement = document.createElement("div");
