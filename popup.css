@@ -1,5 +1,6 @@
+/* YouTube Bookmarker Popup Styles */
 body {
-  width: 400px;
+  width: 550px;
   max-height: 600px;
   font-family: 'Roboto', Arial, sans-serif;
   margin: 0;
@@ -48,13 +49,13 @@ h1 {
 }
 
 .bookmark-thumbnail {
-  flex: 0 0 120px;
+  flex: 0 0 160px;
   position: relative;
 }
 
 .bookmark-thumbnail img {
-  width: 120px;
-  height: 68px;
+  width: 160px;
+  height: 90px;
   object-fit: cover;
 }
 
@@ -108,9 +109,12 @@ h1 {
   color: #666;
   cursor: pointer;
   font-size: 12px;
-  padding: 3px 8px;
+  padding: 5px 10px;
   border-radius: 4px;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .btn:hover {
@@ -136,9 +140,11 @@ h1 {
 ::-webkit-scrollbar {
   width: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #c0c0c0;
   border-radius: 4px;
