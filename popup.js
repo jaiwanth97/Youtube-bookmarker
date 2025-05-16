@@ -28,26 +28,22 @@ function loadBookmarks() {
             return;
         }
 
-        // Sort bookmarks by newest first (using timestamp if available)
         const sortedBookmarks = [...data.bookmarks].sort((a, b) => {
-            // If timestamp exists, use it; otherwise fall back to array order
             const aTime = a.timestamp || 0;
             const bTime = b.timestamp || 0;
-            return bTime - aTime; // Descending order (newest first)
+            return bTime - aTime;
         });
 
         sortedBookmarks.forEach((bookmark, index) => {
             const bookmarkElement = document.createElement("div");
             bookmarkElement.classList.add("bookmark");
 
-            // Format time correctly
             const minutes = Math.floor(bookmark.time / 60);
             const seconds = bookmark.time % 60;
             const formattedTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
-            // Ensure title safety and truncate if needed
             const safeTitle = sanitizeString(bookmark.title || "Untitled");
-            const truncatedTitle = truncateTitle(safeTitle, 45); // Truncate to 30 characters
+            const truncatedTitle = truncateTitle(safeTitle, 45);
             const safeVideoLink = bookmark.videoLink || "#";
             const safeThumbnail = bookmark.thumbnail || "images/default-thumbnail.png";
 
@@ -87,7 +83,6 @@ function loadBookmarks() {
             bookmarksList.appendChild(bookmarkElement);
         });
 
-        // Add event listeners for delete buttons
         document.querySelectorAll('.btn-delete').forEach(button => {
             button.addEventListener('click', function() {
                 const index = parseInt(this.dataset.id);
@@ -97,7 +92,6 @@ function loadBookmarks() {
             });
         });
 
-        // Add event listeners for play buttons
         document.querySelectorAll('.btn-play').forEach(button => {
             button.addEventListener('click', function() {
                 const link = this.dataset.link;
@@ -116,7 +110,6 @@ function deleteBookmark(bookmarkToDelete) {
             return;
         }
         
-        // Find the bookmark to delete by matching its properties
         const index = data.bookmarks.findIndex(bookmark => 
             bookmark.videoId === bookmarkToDelete.videoId && 
             bookmark.time === bookmarkToDelete.time &&
@@ -128,18 +121,15 @@ function deleteBookmark(bookmarkToDelete) {
             return;
         }
         
-        // Remove the bookmark
         const updatedBookmarks = [...data.bookmarks];
         updatedBookmarks.splice(index, 1);
         
-        // Update storage with the modified bookmarks array
         chrome.storage.sync.set({ bookmarks: updatedBookmarks }, () => {
             if (chrome.runtime.lastError) {
                 console.error("Error saving updated bookmarks:", chrome.runtime.lastError);
                 return;
             }
             
-            // Reload the bookmarks display
             loadBookmarks();
         });
     });
@@ -161,10 +151,7 @@ function showErrorMessage(message) {
         font-size: 14px;
     `;
     
-    // Insert at top of container
     container.insertBefore(errorEl, container.firstChild);
-    
-    // Remove after 5 seconds
     setTimeout(() => {
         errorEl.style.opacity = '0';
         errorEl.style.transition = 'opacity 0.5s';
@@ -172,7 +159,6 @@ function showErrorMessage(message) {
     }, 5000);
 }
 
-// Sanitize strings to prevent XSS
 function sanitizeString(str) {
     if (!str) return "";
     const temp = document.createElement('div');
@@ -180,7 +166,6 @@ function sanitizeString(str) {
     return temp.innerHTML;
 }
 
-// Truncate title with ellipsis if it exceeds max length
 function truncateTitle(title, maxLength) {
     if (!title) return "";
     if (title.length <= maxLength) return title;
