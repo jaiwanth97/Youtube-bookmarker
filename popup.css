@@ -88,6 +88,7 @@ h1 {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%; /* Ensure title is properly constrained */
 }
 
 .bookmark-title a {
@@ -124,6 +125,15 @@ h1 {
   color: #333;
 }
 
+.btn-play {
+  color: #1a73e8;
+  font-weight: 500;
+}
+
+.btn-play:hover {
+  background-color: #e8f0fe;
+}
+
 .btn-delete {
   color: #e53935;
   font-weight: 500;
@@ -140,6 +150,22 @@ h1 {
   text-align: center;
   padding: 30px 15px;
   color: #666;
+}
+
+/* Error message styles */
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  font-size: 14px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* Scrollbar styling */

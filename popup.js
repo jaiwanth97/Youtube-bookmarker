@@ -45,8 +45,9 @@ function loadBookmarks() {
             const seconds = bookmark.time % 60;
             const formattedTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
-            // Ensure title safety
+            // Ensure title safety and truncate if needed
             const safeTitle = sanitizeString(bookmark.title || "Untitled");
+            const truncatedTitle = truncateTitle(safeTitle, 45); // Truncate to 30 characters
             const safeVideoLink = bookmark.videoLink || "#";
             const safeThumbnail = bookmark.thumbnail || "images/default-thumbnail.png";
 
@@ -59,7 +60,7 @@ function loadBookmarks() {
                 <div class="bookmark-info">
                     <h3 class="bookmark-title">
                         <a href="${safeVideoLink}" target="_blank" title="${safeTitle}">
-                            ${safeTitle}
+                            ${truncatedTitle}
                         </a>
                     </h3>
                     <div class="bookmark-actions">
@@ -177,4 +178,11 @@ function sanitizeString(str) {
     const temp = document.createElement('div');
     temp.textContent = str;
     return temp.innerHTML;
+}
+
+// Truncate title with ellipsis if it exceeds max length
+function truncateTitle(title, maxLength) {
+    if (!title) return "";
+    if (title.length <= maxLength) return title;
+    return title.substring(0, maxLength) + "...";
 }
