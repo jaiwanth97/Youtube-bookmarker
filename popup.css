@@ -1,5 +1,5 @@
 body {
-  width: 550px;
+  width: 580px;
   max-height: 600px;
   font-family: 'Roboto', Arial, sans-serif;
   margin: 0;
@@ -12,33 +12,38 @@ body {
 header {
   background-color: #ff0000;
   color: white;
-  padding: 15px;
+  padding: 15px 20px;
   text-align: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
   margin: 0;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 500;
 }
 
 .container {
-  padding: 15px;
+  padding: 20px;
 }
 
 #bookmarks-list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 20px;
 }
 
 .bookmark-group {
   display: flex;
   flex-direction: column;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 0.3s ease;
+}
+
+.bookmark-group:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .bookmark {
@@ -46,26 +51,23 @@ h1 {
   background-color: white;
   overflow: hidden;
   position: relative;
-  min-height: 90px;
+  min-height: 100px;
 }
 
 .bookmark-main {
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.bookmark-main:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  border-bottom: none;
 }
 
 .timestamps-dropdown {
-  border-top: 1px solid #eee;
+  border-top: 1px solid #eaeaea;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .bookmark-timestamp {
-  background-color: #f9f9f9;
-  border-bottom: 1px solid #eee;
+  background-color: #fafafa;
+  border-bottom: 1px solid #eaeaea;
 }
 
 .bookmark-timestamp:last-child {
@@ -73,13 +75,13 @@ h1 {
 }
 
 .bookmark-thumbnail {
-  flex: 0 0 160px;
+  flex: 0 0 178px;
   position: relative;
 }
 
 .bookmark-thumbnail img {
-  width: 160px;
-  height: 90px;
+  width: 178px;
+  height: 100px;
   object-fit: cover;
 }
 
@@ -89,14 +91,15 @@ h1 {
   bottom: 5px;
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
-  padding: 2px 4px;
-  border-radius: 2px;
+  padding: 3px 6px;
+  border-radius: 4px;
   font-size: 12px;
+  font-weight: 500;
 }
 
 .bookmark-info {
   flex: 1;
-  padding: 10px;
+  padding: 15px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -104,14 +107,15 @@ h1 {
 }
 
 .bookmark-title {
-  margin: 0 0 8px 0;
-  font-size: 14px;
+  margin: 0 0 10px 0;
+  font-size: 15px;
   font-weight: 500;
   color: #0366d6;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;
+  max-width: 90%;
+  padding-right: 40px; /* Make room for timestamp count */
 }
 
 .bookmark-title a {
@@ -125,31 +129,35 @@ h1 {
 
 .bookmark-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-top: 8px;
 }
 
 .dropdown-indicator {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 15px;
+  right: 15px;
   display: flex;
   align-items: center;
-  gap: 5px;
-  color: #666;
-  font-size: 12px;
+  justify-content: center;
 }
 
 .timestamp-count {
   background-color: #f0f0f0;
-  padding: 2px 6px;
+  padding: 3px 8px;
   border-radius: 12px;
   color: #555;
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .dropdown-icon {
   transition: transform 0.3s ease;
+  margin-left: 4px;
 }
 
 .btn {
@@ -157,13 +165,13 @@ h1 {
   border: none;
   color: #666;
   cursor: pointer;
-  font-size: 12px;
-  padding: 5px 10px;
-  border-radius: 4px;
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 6px;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   z-index: 5; /* Ensure buttons are clickable */
 }
 
@@ -184,9 +192,6 @@ h1 {
 .btn-delete {
   color: #e53935;
   font-weight: 500;
-  padding: 5px 8px;
-  display: inline-flex;
-  align-items: center;
 }
 
 .btn-delete:hover {
@@ -195,16 +200,16 @@ h1 {
 
 .empty-state {
   text-align: center;
-  padding: 30px 15px;
+  padding: 40px 20px;
   color: #666;
 }
 
 .error-message {
   background-color: #ffebee;
   color: #c62828;
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 20px;
+  border-radius: 8px;
   font-size: 14px;
   animation: fadeIn 0.3s ease;
 }

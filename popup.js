@@ -21,21 +21,19 @@ function loadBookmarks() {
         if (data.bookmarks.length === 0) {
             bookmarksList.innerHTML = `
                 <div class="empty-state">
-                    <p>No bookmarks yet.</p>
-                    <p>Click the + button on YouTube videos to add bookmarks.</p>
+                    <p>No bookmarks yet</p>
+                    <p>Click the + button on YouTube videos to add bookmarks</p>
                 </div>
             `;
             return;
         }
 
-        // Sort bookmarks by timestamp (newest first)
         const sortedBookmarks = [...data.bookmarks].sort((a, b) => {
             const aTime = a.timestamp || 0;
             const bTime = b.timestamp || 0;
             return bTime - aTime;
         });
 
-        // Group bookmarks by videoId
         const groupedBookmarks = {};
         sortedBookmarks.forEach(bookmark => {
             if (!groupedBookmarks[bookmark.videoId]) {
@@ -44,75 +42,72 @@ function loadBookmarks() {
             groupedBookmarks[bookmark.videoId].push(bookmark);
         });
 
-        // Process each group
         Object.keys(groupedBookmarks).forEach(videoId => {
             const bookmarks = groupedBookmarks[videoId];
-            const mainBookmark = bookmarks[0]; // Use the first (newest) bookmark as the main one
+            const mainBookmark = bookmarks[0];
             
-            // Create container for the video group
+
             const groupContainer = document.createElement("div");
             groupContainer.classList.add("bookmark-group");
             
-            // Create main bookmark element
-            const mainElement = createBookmarkElement(mainBookmark, 0);
+            const mainElement = createBookmarkElement(mainBookmark);
             mainElement.classList.add("bookmark-main");
-            groupContainer.appendChild(mainElement);
-            
-            // If multiple bookmarks for this video, add dropdown functionality
+
             if (bookmarks.length > 1) {
-                // Add indicator that there are more timestamps
                 const dropdownIndicator = document.createElement("div");
                 dropdownIndicator.classList.add("dropdown-indicator");
-                dropdownIndicator.innerHTML = `
-                    <span class="timestamp-count">${bookmarks.length} timestamps</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                
+                const timestampCount = document.createElement("div");
+                timestampCount.classList.add("timestamp-count");
+                timestampCount.innerHTML = `
+                    ${bookmarks.length}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" 
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dropdown-icon">
                         <polyline points="6 9 12 15 18 9"></polyline>
                     </svg>
                 `;
-                mainElement.querySelector(".bookmark-info").appendChild(dropdownIndicator);
                 
-                // Create dropdown container
+                dropdownIndicator.appendChild(timestampCount);
+                mainElement.querySelector(".bookmark-info").appendChild(dropdownIndicator);
+
                 const dropdownContainer = document.createElement("div");
                 dropdownContainer.classList.add("timestamps-dropdown");
                 dropdownContainer.style.display = "none";
-                
-                // Add the rest of the bookmarks to the dropdown
-                bookmarks.slice(1).forEach((bookmark, idx) => {
-                    const bookmarkElement = createBookmarkElement(bookmark, idx + 1);
+
+                bookmarks.slice(1).forEach(bookmark => {
+                    const bookmarkElement = createBookmarkElement(bookmark);
                     bookmarkElement.classList.add("bookmark-timestamp");
                     dropdownContainer.appendChild(bookmarkElement);
                 });
                 
+                groupContainer.appendChild(mainElement);
                 groupContainer.appendChild(dropdownContainer);
-                
-                // Add toggle functionality
+
                 mainElement.addEventListener('click', function(e) {
-                    // Don't toggle when clicking buttons
-                    if (e.target.closest('.btn')) return;
+
+                    if (e.target.closest('.btn') || e.target.closest('a')) return;
                     
                     const dropdown = this.parentNode.querySelector('.timestamps-dropdown');
                     const isHidden = dropdown.style.display === 'none';
                     dropdown.style.display = isHidden ? 'block' : 'none';
-                    
-                    // Rotate chevron
+
                     const icon = this.querySelector('.dropdown-icon');
                     icon.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0)';
                 });
+            } else {
+                groupContainer.appendChild(mainElement);
             }
             
             bookmarksList.appendChild(groupContainer);
         });
 
-        // Add click event listeners for buttons
         addButtonEventListeners();
     });
 }
 
-function createBookmarkElement(bookmark, index) {
+function createBookmarkElement(bookmark) {
     const bookmarkElement = document.createElement("div");
     bookmarkElement.classList.add("bookmark");
-    bookmarkElement.dataset.videoId = bookmark.videoId;
 
     const minutes = Math.floor(bookmark.time / 60);
     const seconds = bookmark.time % 60;
@@ -137,14 +132,14 @@ function createBookmarkElement(bookmark, index) {
             </h3>
             <div class="bookmark-actions">
                 <button class="btn btn-play" data-link="${safeVideoLink}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" 
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" 
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polygon points="5 3 19 12 5 21 5 3"></polygon>
                     </svg>
                     Play
                 </button>
                 <button class="btn btn-delete" data-video-id="${bookmark.videoId}" data-time="${bookmark.time}" data-title="${safeTitle}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" 
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" 
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 6h18"></path>
                         <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
@@ -162,7 +157,7 @@ function createBookmarkElement(bookmark, index) {
 function addButtonEventListeners() {
     document.querySelectorAll('.btn-delete').forEach(button => {
         button.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent toggling dropdown when deleting
+            e.stopPropagation();
             
             const videoId = this.dataset.videoId;
             const time = parseInt(this.dataset.time);
@@ -176,12 +171,18 @@ function addButtonEventListeners() {
 
     document.querySelectorAll('.btn-play').forEach(button => {
         button.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent toggling dropdown when clicking play
+            e.stopPropagation();
             
             const link = this.dataset.link;
             if (link) {
                 chrome.tabs.create({ url: link });
             }
+        });
+    });
+
+    document.querySelectorAll('.bookmark-title a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.stopPropagation();
         });
     });
 }
@@ -225,14 +226,6 @@ function showErrorMessage(message) {
     const errorEl = document.createElement('div');
     errorEl.className = 'error-message';
     errorEl.textContent = message;
-    errorEl.style.cssText = `
-        background-color: #ffebee;
-        color: #c62828;
-        padding: 10px;
-        margin-bottom: 15px;
-        border-radius: 4px;
-        font-size: 14px;
-    `;
     
     container.insertBefore(errorEl, container.firstChild);
     setTimeout(() => {
