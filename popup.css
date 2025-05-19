@@ -33,20 +33,43 @@ h1 {
   gap: 15px;
 }
 
-.bookmark {
+.bookmark-group {
   display: flex;
-  background-color: white;
+  flex-direction: column;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bookmark {
+  display: flex;
+  background-color: white;
+  overflow: hidden;
   position: relative;
   min-height: 90px;
 }
 
-.bookmark:hover {
+.bookmark-main {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bookmark-main:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.timestamps-dropdown {
+  border-top: 1px solid #eee;
+}
+
+.bookmark-timestamp {
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #eee;
+}
+
+.bookmark-timestamp:last-child {
+  border-bottom: none;
 }
 
 .bookmark-thumbnail {
@@ -77,6 +100,7 @@ h1 {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
 }
 
 .bookmark-title {
@@ -105,6 +129,29 @@ h1 {
   gap: 10px;
 }
 
+.dropdown-indicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #666;
+  font-size: 12px;
+}
+
+.timestamp-count {
+  background-color: #f0f0f0;
+  padding: 2px 6px;
+  border-radius: 12px;
+  color: #555;
+  font-size: 11px;
+}
+
+.dropdown-icon {
+  transition: transform 0.3s ease;
+}
+
 .btn {
   background: none;
   border: none;
@@ -117,6 +164,7 @@ h1 {
   display: flex;
   align-items: center;
   gap: 4px;
+  z-index: 5; /* Ensure buttons are clickable */
 }
 
 .btn:hover {

@@ -1,3 +1,5 @@
+// Content script modifications for handling duplicate bookmarks
+
 function injectPlusButton() {
     const rightControls = document.querySelector(".ytp-right-controls");
     if (!rightControls) return;
@@ -51,7 +53,7 @@ function injectPlusButton() {
 
         // Store bookmark directly without relying on background script
         chrome.storage.sync.get({ bookmarks: [] }, (data) => {
-            // Check for duplicates
+            // Check for duplicates - we only need to check for exact time duplicates
             const isDuplicate = data.bookmarks.some(bookmark => 
                 bookmark.videoId === videoId && Math.abs(bookmark.time - time) < 3
             );
@@ -63,11 +65,11 @@ function injectPlusButton() {
                         console.error("Error saving bookmark:", chrome.runtime.lastError);
                         return;
                     }
-                    // Show a brief notification
-                    showSaveNotification();
+                    // Show a brief notification - we're bookmarking a new timestamp
+                    showSaveNotification("Bookmark saved!");
                 });
             } else {
-                // Already bookmarked, show notification
+                // Already bookmarked this timestamp, show notification
                 showSaveNotification("Already bookmarked!");
             }
         });

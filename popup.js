@@ -28,82 +28,165 @@ function loadBookmarks() {
             return;
         }
 
+        // Sort bookmarks by timestamp (newest first)
         const sortedBookmarks = [...data.bookmarks].sort((a, b) => {
             const aTime = a.timestamp || 0;
             const bTime = b.timestamp || 0;
             return bTime - aTime;
         });
 
-        sortedBookmarks.forEach((bookmark, index) => {
-            const bookmarkElement = document.createElement("div");
-            bookmarkElement.classList.add("bookmark");
-
-            const minutes = Math.floor(bookmark.time / 60);
-            const seconds = bookmark.time % 60;
-            const formattedTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-
-            const safeTitle = sanitizeString(bookmark.title || "Untitled");
-            const truncatedTitle = truncateTitle(safeTitle, 45);
-            const safeVideoLink = bookmark.videoLink || "#";
-            const safeThumbnail = bookmark.thumbnail || "images/default-thumbnail.png";
-
-            bookmarkElement.innerHTML = `
-                <div class="bookmark-thumbnail">
-                    <img src="${safeThumbnail}" alt="Thumbnail" 
-                         onerror="this.src='images/default-thumbnail.png';">
-                    <div class="bookmark-time">${formattedTime}</div>
-                </div>
-                <div class="bookmark-info">
-                    <h3 class="bookmark-title">
-                        <a href="${safeVideoLink}" target="_blank" title="${safeTitle}">
-                            ${truncatedTitle}
-                        </a>
-                    </h3>
-                    <div class="bookmark-actions">
-                        <button class="btn btn-play" data-link="${safeVideoLink}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" 
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                            </svg>
-                            Play
-                        </button>
-                        <button class="btn btn-delete" data-id="${index}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" 
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M3 6h18"></path>
-                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                            </svg>
-                            Delete
-                        </button>
-                    </div>
-                </div>
-            `;
-
-            bookmarksList.appendChild(bookmarkElement);
+        // Group bookmarks by videoId
+        const groupedBookmarks = {};
+        sortedBookmarks.forEach(bookmark => {
+            if (!groupedBookmarks[bookmark.videoId]) {
+                groupedBookmarks[bookmark.videoId] = [];
+            }
+            groupedBookmarks[bookmark.videoId].push(bookmark);
         });
 
-        document.querySelectorAll('.btn-delete').forEach(button => {
-            button.addEventListener('click', function() {
-                const index = parseInt(this.dataset.id);
-                if (!isNaN(index) && index >= 0 && index < sortedBookmarks.length) {
-                    deleteBookmark(sortedBookmarks[index]);
-                }
-            });
+        // Process each group
+        Object.keys(groupedBookmarks).forEach(videoId => {
+            const bookmarks = groupedBookmarks[videoId];
+            const mainBookmark = bookmarks[0]; // Use the first (newest) bookmark as the main one
+            
+            // Create container for the video group
+            const groupContainer = document.createElement("div");
+            groupContainer.classList.add("bookmark-group");
+            
+            // Create main bookmark element
+            const mainElement = createBookmarkElement(mainBookmark, 0);
+            mainElement.classList.add("bookmark-main");
+            groupContainer.appendChild(mainElement);
+            
+            // If multiple bookmarks for this video, add dropdown functionality
+            if (bookmarks.length > 1) {
+                // Add indicator that there are more timestamps
+                const dropdownIndicator = document.createElement("div");
+                dropdownIndicator.classList.add("dropdown-indicator");
+                dropdownIndicator.innerHTML = `
+                    <span class="timestamp-count">${bookmarks.length} timestamps</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dropdown-icon">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                `;
+                mainElement.querySelector(".bookmark-info").appendChild(dropdownIndicator);
+                
+                // Create dropdown container
+                const dropdownContainer = document.createElement("div");
+                dropdownContainer.classList.add("timestamps-dropdown");
+                dropdownContainer.style.display = "none";
+                
+                // Add the rest of the bookmarks to the dropdown
+                bookmarks.slice(1).forEach((bookmark, idx) => {
+                    const bookmarkElement = createBookmarkElement(bookmark, idx + 1);
+                    bookmarkElement.classList.add("bookmark-timestamp");
+                    dropdownContainer.appendChild(bookmarkElement);
+                });
+                
+                groupContainer.appendChild(dropdownContainer);
+                
+                // Add toggle functionality
+                mainElement.addEventListener('click', function(e) {
+                    // Don't toggle when clicking buttons
+                    if (e.target.closest('.btn')) return;
+                    
+                    const dropdown = this.parentNode.querySelector('.timestamps-dropdown');
+                    const isHidden = dropdown.style.display === 'none';
+                    dropdown.style.display = isHidden ? 'block' : 'none';
+                    
+                    // Rotate chevron
+                    const icon = this.querySelector('.dropdown-icon');
+                    icon.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0)';
+                });
+            }
+            
+            bookmarksList.appendChild(groupContainer);
         });
 
-        document.querySelectorAll('.btn-play').forEach(button => {
-            button.addEventListener('click', function() {
-                const link = this.dataset.link;
-                if (link) {
-                    chrome.tabs.create({ url: link });
-                }
-            });
+        // Add click event listeners for buttons
+        addButtonEventListeners();
+    });
+}
+
+function createBookmarkElement(bookmark, index) {
+    const bookmarkElement = document.createElement("div");
+    bookmarkElement.classList.add("bookmark");
+    bookmarkElement.dataset.videoId = bookmark.videoId;
+
+    const minutes = Math.floor(bookmark.time / 60);
+    const seconds = bookmark.time % 60;
+    const formattedTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+    const safeTitle = sanitizeString(bookmark.title || "Untitled");
+    const truncatedTitle = truncateTitle(safeTitle, 45);
+    const safeVideoLink = bookmark.videoLink || "#";
+    const safeThumbnail = bookmark.thumbnail || "images/default-thumbnail.png";
+
+    bookmarkElement.innerHTML = `
+        <div class="bookmark-thumbnail">
+            <img src="${safeThumbnail}" alt="Thumbnail" 
+                 onerror="this.src='images/default-thumbnail.png';">
+            <div class="bookmark-time">${formattedTime}</div>
+        </div>
+        <div class="bookmark-info">
+            <h3 class="bookmark-title">
+                <a href="${safeVideoLink}" target="_blank" title="${safeTitle}">
+                    ${truncatedTitle}
+                </a>
+            </h3>
+            <div class="bookmark-actions">
+                <button class="btn btn-play" data-link="${safeVideoLink}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" 
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    Play
+                </button>
+                <button class="btn btn-delete" data-video-id="${bookmark.videoId}" data-time="${bookmark.time}" data-title="${safeTitle}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" 
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18"></path>
+                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                    </svg>
+                    Delete
+                </button>
+            </div>
+        </div>
+    `;
+
+    return bookmarkElement;
+}
+
+function addButtonEventListeners() {
+    document.querySelectorAll('.btn-delete').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent toggling dropdown when deleting
+            
+            const videoId = this.dataset.videoId;
+            const time = parseInt(this.dataset.time);
+            const title = this.dataset.title;
+            
+            if (videoId && time !== undefined) {
+                deleteBookmark(videoId, time, title);
+            }
+        });
+    });
+
+    document.querySelectorAll('.btn-play').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent toggling dropdown when clicking play
+            
+            const link = this.dataset.link;
+            if (link) {
+                chrome.tabs.create({ url: link });
+            }
         });
     });
 }
 
-function deleteBookmark(bookmarkToDelete) {
+function deleteBookmark(videoId, time, title) {
     chrome.storage.sync.get({ bookmarks: [] }, (data) => {
         if (chrome.runtime.lastError) {
             console.error("Error accessing bookmarks:", chrome.runtime.lastError);
@@ -111,9 +194,9 @@ function deleteBookmark(bookmarkToDelete) {
         }
         
         const index = data.bookmarks.findIndex(bookmark => 
-            bookmark.videoId === bookmarkToDelete.videoId && 
-            bookmark.time === bookmarkToDelete.time &&
-            bookmark.title === bookmarkToDelete.title
+            bookmark.videoId === videoId && 
+            bookmark.time === time &&
+            bookmark.title === title
         );
         
         if (index === -1) {
