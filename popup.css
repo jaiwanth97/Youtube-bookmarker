@@ -4,8 +4,8 @@ body {
   font-family: 'Roboto', Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #121212; /* Dark theme background */
-  color: #e0e0e0; /* Light text for dark theme */
+  background-color: #121212; 
+  color: #e0e0e0; 
   overflow-y: auto;
 }
 
@@ -48,7 +48,7 @@ h1 {
 
 .bookmark {
   display: flex;
-  background-color: #1e1e1e; /* Dark card background */
+  background-color: #1e1e1e; 
   overflow: hidden;
   position: relative;
   min-height: 100px;
@@ -60,13 +60,13 @@ h1 {
 }
 
 .timestamps-dropdown {
-  border-top: 1px solid #333; /* Darker border for dark theme */
+  border-top: 1px solid #333; 
   max-height: 300px;
   overflow-y: auto;
 }
 
 .bookmark-timestamp {
-  background-color: #282828; /* Slightly lighter background for timestamps */
+  background-color: #282828; 
   border-bottom: 1px solid #333;
 }
 
@@ -74,7 +74,6 @@ h1 {
   border-bottom: none;
 }
 
-/* Make timestamps appear smaller when expanded */
 .bookmark-timestamp .bookmark-thumbnail img {
   width: 110px;
   height: 62px;
@@ -129,12 +128,12 @@ h1 {
   margin: 0 0 10px 0;
   font-size: 15px;
   font-weight: 500;
-  color: #4f9eff; /* Lighter blue for dark theme */
+  color: #4f9eff; 
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 90%;
-  padding-right: 40px; /* Make room for timestamp count */
+  padding-right: 40px; 
 }
 
 .bookmark-title a {
@@ -163,10 +162,10 @@ h1 {
 }
 
 .timestamp-count {
-  background-color: #333; /* Darker background for count */
+  background-color: #333; 
   padding: 3px 8px;
   border-radius: 12px;
-  color: #ccc; /* Lighter text for dark theme */
+  color: #ccc; 
   font-size: 12px;
   font-weight: 500;
   display: flex;
@@ -182,7 +181,7 @@ h1 {
 .btn {
   background: none;
   border: none;
-  color: #aaa; /* Lighter text for dark theme buttons */
+  color: #aaa; 
   cursor: pointer;
   font-size: 13px;
   padding: 6px 12px;
@@ -191,50 +190,50 @@ h1 {
   display: flex;
   align-items: center;
   gap: 6px;
-  z-index: 5; /* Ensure buttons are clickable */
+  z-index: 5; 
 }
 
 .btn:hover {
-  background-color: #333; /* Darker hover for dark theme */
+  background-color: #333; 
   color: #fff;
 }
 
 .btn-play {
-  color: #4f9eff; /* Lighter blue for dark theme */
+  color: #4f9eff; 
   font-weight: 500;
 }
 
 .btn-play:hover {
-  background-color: rgba(79, 158, 255, 0.2); /* Transparent blue hover */
+  background-color: rgba(79, 158, 255, 0.2); 
 }
 
 .btn-delete {
-  color: #ff5252; /* Lighter red for dark theme */
+  color: #ff5252; 
   font-weight: 500;
 }
 
 .btn-delete:hover {
-  background-color: rgba(255, 82, 82, 0.2); /* Transparent red hover */
+  background-color: rgba(255, 82, 82, 0.2); 
 }
 
 .btn-timestamps {
-  color: #ffab40; /* Orange for timestamps button */
+  color: #ffab40; 
   font-weight: 500;
 }
 
 .btn-timestamps:hover {
-  background-color: rgba(255, 171, 64, 0.2); /* Transparent orange hover */
+  background-color: rgba(255, 171, 64, 0.2); 
 }
 
 .empty-state {
   text-align: center;
   padding: 40px 20px;
-  color: #aaa; /* Lighter text for dark theme */
+  color: #aaa; 
 }
 
 .error-message {
-  background-color: rgba(198, 40, 40, 0.2); /* Transparent dark red */
-  color: #ff6e6e; /* Lighter red text for dark theme */
+  background-color: rgba(198, 40, 40, 0.2); 
+  color: #ff6e6e; 
   padding: 12px;
   margin-bottom: 20px;
   border-radius: 8px;
@@ -247,7 +246,6 @@ h1 {
   to { opacity: 1; }
 }
 
-/* Toggle switch for theme */
 .theme-toggle {
   position: absolute;
   top: 15px;
@@ -312,19 +310,18 @@ input:checked + .slider:before {
 }
 
 ::-webkit-scrollbar-track {
-  background: #333; /* Darker track for dark theme */
+  background: #333; 
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #666; /* Darker thumb for dark theme */
+  background: #666; 
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #888; /* Lighter on hover for dark theme */
+  background: #888; 
 }
 
-/* Light theme styles - applied when body doesn't have dark-theme class */
 body.light-theme {
   background-color: #f9f9f9;
   color: #333;
