@@ -4,8 +4,8 @@ body {
   font-family: 'Roboto', Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f9f9f9;
-  color: #333;
+  background-color: #121212; /* Dark theme background */
+  color: #e0e0e0; /* Light text for dark theme */
   overflow-y: auto;
 }
 
@@ -14,7 +14,7 @@ header {
   color: white;
   padding: 15px 20px;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 h1 {
@@ -38,17 +38,17 @@ h1 {
   flex-direction: column;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   transition: box-shadow 0.3s ease;
 }
 
 .bookmark-group:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .bookmark {
   display: flex;
-  background-color: white;
+  background-color: #1e1e1e; /* Dark card background */
   overflow: hidden;
   position: relative;
   min-height: 100px;
@@ -60,18 +60,37 @@ h1 {
 }
 
 .timestamps-dropdown {
-  border-top: 1px solid #eaeaea;
+  border-top: 1px solid #333; /* Darker border for dark theme */
   max-height: 300px;
   overflow-y: auto;
 }
 
 .bookmark-timestamp {
-  background-color: #fafafa;
-  border-bottom: 1px solid #eaeaea;
+  background-color: #282828; /* Slightly lighter background for timestamps */
+  border-bottom: 1px solid #333;
 }
 
 .bookmark-timestamp:last-child {
   border-bottom: none;
+}
+
+/* Make timestamps appear smaller when expanded */
+.bookmark-timestamp .bookmark-thumbnail img {
+  width: 110px;
+  height: 62px;
+}
+
+.bookmark-timestamp .bookmark-info {
+  padding: 8px 15px;
+}
+
+.bookmark-timestamp .bookmark-title {
+  font-size: 13px;
+  margin-bottom: 5px;
+}
+
+.bookmark-timestamp .bookmark-actions {
+  margin-top: 3px;
 }
 
 .bookmark-thumbnail {
@@ -110,7 +129,7 @@ h1 {
   margin: 0 0 10px 0;
   font-size: 15px;
   font-weight: 500;
-  color: #0366d6;
+  color: #4f9eff; /* Lighter blue for dark theme */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -144,10 +163,10 @@ h1 {
 }
 
 .timestamp-count {
-  background-color: #f0f0f0;
+  background-color: #333; /* Darker background for count */
   padding: 3px 8px;
   border-radius: 12px;
-  color: #555;
+  color: #ccc; /* Lighter text for dark theme */
   font-size: 12px;
   font-weight: 500;
   display: flex;
@@ -163,7 +182,7 @@ h1 {
 .btn {
   background: none;
   border: none;
-  color: #666;
+  color: #aaa; /* Lighter text for dark theme buttons */
   cursor: pointer;
   font-size: 13px;
   padding: 6px 12px;
@@ -176,37 +195,46 @@ h1 {
 }
 
 .btn:hover {
-  background-color: #f0f0f0;
-  color: #333;
+  background-color: #333; /* Darker hover for dark theme */
+  color: #fff;
 }
 
 .btn-play {
-  color: #1a73e8;
+  color: #4f9eff; /* Lighter blue for dark theme */
   font-weight: 500;
 }
 
 .btn-play:hover {
-  background-color: #e8f0fe;
+  background-color: rgba(79, 158, 255, 0.2); /* Transparent blue hover */
 }
 
 .btn-delete {
-  color: #e53935;
+  color: #ff5252; /* Lighter red for dark theme */
   font-weight: 500;
 }
 
 .btn-delete:hover {
-  background-color: #ffebee;
+  background-color: rgba(255, 82, 82, 0.2); /* Transparent red hover */
+}
+
+.btn-timestamps {
+  color: #ffab40; /* Orange for timestamps button */
+  font-weight: 500;
+}
+
+.btn-timestamps:hover {
+  background-color: rgba(255, 171, 64, 0.2); /* Transparent orange hover */
 }
 
 .empty-state {
   text-align: center;
   padding: 40px 20px;
-  color: #666;
+  color: #aaa; /* Lighter text for dark theme */
 }
 
 .error-message {
-  background-color: #ffebee;
-  color: #c62828;
+  background-color: rgba(198, 40, 40, 0.2); /* Transparent dark red */
+  color: #ff6e6e; /* Lighter red text for dark theme */
   padding: 12px;
   margin-bottom: 20px;
   border-radius: 8px;
@@ -219,19 +247,164 @@ h1 {
   to { opacity: 1; }
 }
 
+/* Toggle switch for theme */
+.theme-toggle {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-toggle-label {
+  color: white;
+  font-size: 14px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #ffab40;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #333; /* Darker track for dark theme */
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c0c0c0;
+  background: #666; /* Darker thumb for dark theme */
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
+  background: #888; /* Lighter on hover for dark theme */
+}
+
+/* Light theme styles - applied when body doesn't have dark-theme class */
+body.light-theme {
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+body.light-theme .bookmark {
+  background-color: white;
+}
+
+body.light-theme .bookmark-timestamp {
+  background-color: #fafafa;
+}
+
+body.light-theme .timestamps-dropdown {
+  border-top: 1px solid #eaeaea;
+}
+
+body.light-theme .bookmark-timestamp {
+  border-bottom: 1px solid #eaeaea;
+}
+
+body.light-theme .bookmark-title {
+  color: #0366d6;
+}
+
+body.light-theme .btn {
+  color: #666;
+}
+
+body.light-theme .btn:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+body.light-theme .btn-play {
+  color: #1a73e8;
+}
+
+body.light-theme .btn-play:hover {
+  background-color: #e8f0fe;
+}
+
+body.light-theme .btn-delete {
+  color: #e53935;
+}
+
+body.light-theme .btn-delete:hover {
+  background-color: #ffebee;
+}
+
+body.light-theme .btn-timestamps {
+  color: #e67700;
+}
+
+body.light-theme .btn-timestamps:hover {
+  background-color: #fff3e0;
+}
+
+body.light-theme .timestamp-count {
+  background-color: #f0f0f0;
+  color: #555;
+}
+
+body.light-theme .empty-state {
+  color: #666;
+}
+
+body.light-theme .error-message {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+body.light-theme ::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+body.light-theme ::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+}
+
+body.light-theme ::-webkit-scrollbar-thumb:hover {
   background: #a0a0a0;
 }

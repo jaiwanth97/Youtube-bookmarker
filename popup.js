@@ -1,6 +1,27 @@
 document.addEventListener('DOMContentLoaded', function() {
     loadBookmarks();
+    setupThemeToggle();
 });
+
+function setupThemeToggle() {
+    const themeToggle = document.getElementById('themeToggle');
+    
+    // Check for saved theme preference or use default (dark)
+    const currentTheme = localStorage.getItem('theme') || 'dark';
+    document.body.className = currentTheme + '-theme';
+    themeToggle.checked = currentTheme === 'dark';
+    
+    // Theme toggle event listener
+    themeToggle.addEventListener('change', function() {
+        if (this.checked) {
+            document.body.className = 'dark-theme';
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.className = 'light-theme';
+            localStorage.setItem('theme', 'light');
+        }
+    });
+}
 
 function loadBookmarks() {
     chrome.storage.sync.get({ bookmarks: [] }, (data) => {
@@ -28,12 +49,14 @@ function loadBookmarks() {
             return;
         }
 
+        // Sort bookmarks by timestamp (newest first)
         const sortedBookmarks = [...data.bookmarks].sort((a, b) => {
             const aTime = a.timestamp || 0;
             const bTime = b.timestamp || 0;
             return bTime - aTime;
         });
 
+        // Group bookmarks by videoId
         const groupedBookmarks = {};
         sortedBookmarks.forEach(bookmark => {
             if (!groupedBookmarks[bookmark.videoId]) {
@@ -42,18 +65,22 @@ function loadBookmarks() {
             groupedBookmarks[bookmark.videoId].push(bookmark);
         });
 
+        // Process each group
         Object.keys(groupedBookmarks).forEach(videoId => {
             const bookmarks = groupedBookmarks[videoId];
-            const mainBookmark = bookmarks[0];
+            const mainBookmark = bookmarks[0]; // Use the first (newest) bookmark as the main one
             
-
+            // Create container for the video group
             const groupContainer = document.createElement("div");
             groupContainer.classList.add("bookmark-group");
             
-            const mainElement = createBookmarkElement(mainBookmark);
+            // Create main bookmark element
+            const mainElement = createBookmarkElement(mainBookmark, bookmarks.length > 1);
             mainElement.classList.add("bookmark-main");
-
+            
+            // If multiple bookmarks for this video, add dropdown functionality
             if (bookmarks.length > 1) {
+                // Add indicator that there are more timestamps
                 const dropdownIndicator = document.createElement("div");
                 dropdownIndicator.classList.add("dropdown-indicator");
                 
@@ -69,43 +96,49 @@ function loadBookmarks() {
                 
                 dropdownIndicator.appendChild(timestampCount);
                 mainElement.querySelector(".bookmark-info").appendChild(dropdownIndicator);
-
+                
+                // Create dropdown container
                 const dropdownContainer = document.createElement("div");
                 dropdownContainer.classList.add("timestamps-dropdown");
                 dropdownContainer.style.display = "none";
-
+                
+                // Add the rest of the bookmarks to the dropdown
                 bookmarks.slice(1).forEach(bookmark => {
-                    const bookmarkElement = createBookmarkElement(bookmark);
+                    const bookmarkElement = createBookmarkElement(bookmark, false);
                     bookmarkElement.classList.add("bookmark-timestamp");
                     dropdownContainer.appendChild(bookmarkElement);
                 });
                 
                 groupContainer.appendChild(mainElement);
                 groupContainer.appendChild(dropdownContainer);
-
+                
+                // Add toggle functionality
                 mainElement.addEventListener('click', function(e) {
-
+                    // Don't toggle when clicking buttons or links
                     if (e.target.closest('.btn') || e.target.closest('a')) return;
                     
                     const dropdown = this.parentNode.querySelector('.timestamps-dropdown');
                     const isHidden = dropdown.style.display === 'none';
                     dropdown.style.display = isHidden ? 'block' : 'none';
-
+                    
+                    // Rotate chevron
                     const icon = this.querySelector('.dropdown-icon');
                     icon.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0)';
                 });
             } else {
+                // Single bookmark, no dropdown needed
                 groupContainer.appendChild(mainElement);
             }
             
             bookmarksList.appendChild(groupContainer);
         });
 
+        // Add click event listeners for buttons
         addButtonEventListeners();
     });
 }
 
-function createBookmarkElement(bookmark) {
+function createBookmarkElement(bookmark, showTimestampsButton) {
     const bookmarkElement = document.createElement("div");
     bookmarkElement.classList.add("bookmark");
 
@@ -117,6 +150,47 @@ function createBookmarkElement(bookmark) {
     const truncatedTitle = truncateTitle(safeTitle, 45);
     const safeVideoLink = bookmark.videoLink || "#";
     const safeThumbnail = bookmark.thumbnail || "images/default-thumbnail.png";
+
+    // Get videoId from link for use in timestamps button
+    const videoId = bookmark.videoId || "";
+
+    // Define buttons based on whether we show the timestamps button
+    let buttonsHTML = `
+        <button class="btn btn-play" data-link="${safeVideoLink}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" 
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            Play
+        </button>
+    `;
+    
+    // Add Timestamps button if this bookmark has multiple timestamps
+    if (showTimestampsButton) {
+        buttonsHTML += `
+            <button class="btn btn-timestamps" data-video-id="${videoId}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" 
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Timestamps
+            </button>
+        `;
+    }
+    
+    // Add Delete button (always shown)
+    buttonsHTML += `
+        <button class="btn btn-delete" data-video-id="${bookmark.videoId}" data-time="${bookmark.time}" data-title="${safeTitle}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" 
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 6h18"></path>
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+            </svg>
+            Delete
+        </button>
+    `;
 
     bookmarkElement.innerHTML = `
         <div class="bookmark-thumbnail">
@@ -131,22 +205,7 @@ function createBookmarkElement(bookmark) {
                 </a>
             </h3>
             <div class="bookmark-actions">
-                <button class="btn btn-play" data-link="${safeVideoLink}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" 
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                    </svg>
-                    Play
-                </button>
-                <button class="btn btn-delete" data-video-id="${bookmark.videoId}" data-time="${bookmark.time}" data-title="${safeTitle}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" 
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 6h18"></path>
-                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                    </svg>
-                    Delete
-                </button>
+                ${buttonsHTML}
             </div>
         </div>
     `;
@@ -155,9 +214,10 @@ function createBookmarkElement(bookmark) {
 }
 
 function addButtonEventListeners() {
+    // Delete button listeners
     document.querySelectorAll('.btn-delete').forEach(button => {
         button.addEventListener('click', function(e) {
-            e.stopPropagation();
+            e.stopPropagation(); // Prevent toggling dropdown when deleting
             
             const videoId = this.dataset.videoId;
             const time = parseInt(this.dataset.time);
@@ -169,9 +229,10 @@ function addButtonEventListeners() {
         });
     });
 
+    // Play button listeners
     document.querySelectorAll('.btn-play').forEach(button => {
         button.addEventListener('click', function(e) {
-            e.stopPropagation();
+            e.stopPropagation(); // Prevent toggling dropdown when clicking play
             
             const link = this.dataset.link;
             if (link) {
@@ -179,7 +240,22 @@ function addButtonEventListeners() {
             }
         });
     });
-
+    
+    // Timestamps button listeners
+    document.querySelectorAll('.btn-timestamps').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent toggling dropdown when clicking timestamps
+            
+            // Find and click the parent element to toggle the dropdown
+            const mainElement = this.closest('.bookmark-main');
+            if (mainElement) {
+                // Simulate a click on the main element to toggle dropdown
+                mainElement.click();
+            }
+        });
+    });
+    
+    // Make video title links also stop propagation
     document.querySelectorAll('.bookmark-title a').forEach(link => {
         link.addEventListener('click', function(e) {
             e.stopPropagation();
