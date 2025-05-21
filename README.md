@@ -16,7 +16,7 @@ A Chrome extension that allows you to bookmark specific timestamps in YouTube vi
 
 ## Installation
 
-### Installation
+### Installation  
 
 ### Manual Installation
 1. Download or clone this repository
