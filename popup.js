@@ -127,7 +127,7 @@ function createBookmarkElement(bookmark, showTimestampsButton) {
     const minutes = Math.floor(bookmark.time / 60);
     const seconds = bookmark.time % 60;
     const formattedTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-
+ 
     const safeTitle = sanitizeString(bookmark.title || "Untitled");
     const truncatedTitle = truncateTitle(safeTitle, 38);
     const safeVideoLink = bookmark.videoLink || "#";
