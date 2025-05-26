@@ -1,6 +1,6 @@
 # YouTube Bookmarker
 
-![YouTube Bookmarker](https://img.shields.io/badge/Chrome%20Extension-v2.1.3-red)
+![YouTube Bookmarker](https://img.shields.io/badge/Chrome%20Extension-v3.0.1-red)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
 A Chrome extension that allows you to bookmark specific timestamps in YouTube videos for later reference. Save your favorite moments, important sections, or quotes with a single click and access them anytime from the extension's popup.
