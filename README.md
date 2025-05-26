@@ -76,6 +76,9 @@ A Chrome extension that allows you to bookmark specific timestamps in YouTube vi
 - `popup.html`, `popup.js`, `popup.css` - User interface
 - `images/` - Icons and assets
 
+### Issues
+- Currently it gives out an error when saving a bookamrk in the extensions page but everything is working fine, so just ignore that for now
+
 ### Building and Testing
 1. Make your changes to the codebase
 2. Load the extension in Chrome using Developer mode
