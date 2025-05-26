@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Youtube Bookmarker",
-    "version": "2.3.4",
+    "version": "3.0.1",
     "description": "This extension allows you to bookmark YouTube videos and their timestamps.",
     "author": "jaiwanth97",
     "permissions": ["storage", "tabs"],
