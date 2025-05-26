@@ -1,5 +1,5 @@
 body {
-  width: 580px;
+  width: 720px;
   max-height: 600px;
   font-family: 'Roboto', Arial, sans-serif;
   margin: 0;
@@ -92,8 +92,8 @@ h1 {
 }
 
 .bookmark-timestamp .bookmark-thumbnail img {
-  width: 100px;
-  height: 56px;
+  width: 120px;
+  height: 68px;
   border-radius: 4px;
 }
 
@@ -112,7 +112,7 @@ h1 {
 }
 
 .bookmark-thumbnail {
-  flex: 0 0 160px;
+  flex: 0 0 200px;
   position: relative;
   padding: 12px;
   display: flex;
@@ -121,8 +121,8 @@ h1 {
 }
 
 .bookmark-thumbnail img {
-  width: 140px;
-  height: 78px;
+  width: 180px;
+  height: 100px;
   object-fit: cover;
   border-radius: 6px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -543,18 +543,18 @@ body.light-theme input:checked + .slider {
 }
 
 /* Responsive adjustments */
-@media (max-width: 600px) {
+@media (max-width: 750px) {
   body {
-    width: 400px;
+    width: 520px;
   }
   
   .bookmark-thumbnail {
-    flex: 0 0 120px;
+    flex: 0 0 140px;
   }
   
   .bookmark-thumbnail img {
-    width: 100px;
-    height: 56px;
+    width: 120px;
+    height: 68px;
   }
   
   .bookmark-actions {
