@@ -1,10 +1,7 @@
-// Content script modifications for handling duplicate bookmarks
-
 function injectPlusButton() {
     const rightControls = document.querySelector(".ytp-right-controls");
     if (!rightControls) return;
 
-    // Prevent duplicate button injection
     if (document.getElementById("yt-bookmark-btn")) return;
 
     const button = document.createElement("button");
@@ -27,14 +24,12 @@ function injectPlusButton() {
             console.error("No video element found");
             return;
         }
-        
-        // Get video information
+
         const title = document.title.replace(" - YouTube", "").trim();
         const time = Math.floor(video.currentTime);
         const urlParams = new URLSearchParams(window.location.search);
         const videoId = urlParams.get("v");
-        
-        // Validate we have a valid videoId
+
         if (!videoId) {
             console.error("No video ID found");
             return;
@@ -48,12 +43,9 @@ function injectPlusButton() {
             videoId, 
             thumbnail, 
             videoLink,
-            timestamp: Date.now() // Add timestamp for uniqueness and sorting
+            timestamp: Date.now()
         };
-
-        // Store bookmark directly without relying on background script
         chrome.storage.sync.get({ bookmarks: [] }, (data) => {
-            // Check for duplicates - we only need to check for exact time duplicates
             const isDuplicate = data.bookmarks.some(bookmark => 
                 bookmark.videoId === videoId && Math.abs(bookmark.time - time) < 3
             );
@@ -65,11 +57,9 @@ function injectPlusButton() {
                         console.error("Error saving bookmark:", chrome.runtime.lastError);
                         return;
                     }
-                    // Show a brief notification - we're bookmarking a new timestamp
                     showSaveNotification("Bookmark saved!");
                 });
             } else {
-                // Already bookmarked this timestamp, show notification
                 showSaveNotification("Already bookmarked!");
             }
         });
@@ -79,7 +69,6 @@ function injectPlusButton() {
 }
 
 function showSaveNotification(message = "Bookmark saved!") {
-    // Create notification element
     const notification = document.createElement("div");
     notification.textContent = message;
     notification.style.cssText = `
@@ -96,25 +85,18 @@ function showSaveNotification(message = "Bookmark saved!") {
     `;
     
     document.body.appendChild(notification);
-    
-    // Remove after 2 seconds
     setTimeout(() => {
         notification.style.opacity = "0";
         notification.style.transition = "opacity 0.5s";
         setTimeout(() => notification.remove(), 500);
     }, 2000);
 }
-
-// Track if we're in the process of checking for video player
 let checkingForVideoPlayer = false;
 
 function checkForVideoPlayerAndInject() {
-    // Prevent multiple concurrent checks
     if (checkingForVideoPlayer) return;
     
     checkingForVideoPlayer = true;
-    
-    // More robust checking for video player with retry logic
     let attempts = 0;
     const maxAttempts = 10;
     
@@ -132,23 +114,17 @@ function checkForVideoPlayerAndInject() {
     }, 500);
 }
 
-// URL change detection
 let lastUrl = location.href;
 const observer = new MutationObserver(() => {
     if (location.href !== lastUrl) {
         lastUrl = location.href;
-        
-        // Only inject on watch pages
         if (location.pathname === "/watch") {
             checkForVideoPlayerAndInject();
         }
     }
 });
-
-// Start observing
 observer.observe(document, { subtree: true, childList: true });
 
-// Initial injection attempt
 if (location.pathname === "/watch") {
     checkForVideoPlayerAndInject();
 }
