@@ -119,7 +119,7 @@ function loadBookmarks() {
         addButtonEventListeners();
     });
 }
-
+ 
 function createBookmarkElement(bookmark, showTimestampsButton) {
     const bookmarkElement = document.createElement("div");
     bookmarkElement.classList.add("bookmark");
