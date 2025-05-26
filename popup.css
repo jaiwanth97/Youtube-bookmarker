@@ -382,7 +382,6 @@ input:checked + .slider:before {
   transform: translateX(20px);
 }
 
-/* Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -402,7 +401,6 @@ input:checked + .slider:before {
   background: linear-gradient(135deg, #555 0%, #666 100%); 
 }
 
-/* Light Theme */
 body.light-theme {
   background-color: #ffffff;
   color: #212121;
@@ -543,8 +541,6 @@ body.light-theme input:checked + .slider {
     transform: translateY(0);
   }
 }
-
-/* Responsive adjustments */
 @media (max-width: 750px) {
   body {
     width: 520px;
