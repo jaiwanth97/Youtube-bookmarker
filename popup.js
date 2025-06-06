@@ -292,4 +292,4 @@ function truncateTitle(title, maxLength) {
     if (!title) return "";
     if (title.length <= maxLength) return title;
     return title.substring(0, maxLength) + "...";
-}
+} 
