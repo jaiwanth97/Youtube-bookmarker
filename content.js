@@ -29,6 +29,7 @@ function injectPlusButton() {
         const time = Math.floor(video.currentTime);
         const urlParams = new URLSearchParams(window.location.search);
         const videoId = urlParams.get("v");
+        
         if (!videoId) {
             console.error("No video ID found");
             return;
