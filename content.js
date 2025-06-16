@@ -21,7 +21,7 @@ function injectPlusButton() {
     button.addEventListener("click", () => {
         const video = document.querySelector("video");
         if (!video) {
-            console.error("No video element found");    
+            console.error("No video element found");
             return;
         }
 
